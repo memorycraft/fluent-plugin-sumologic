@@ -8,6 +8,7 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
   config_param :host, :string,  :default => 'localhost'
   config_param :port, :integer, :default => 9200
   config_param :path, :string,  :default => '/'
+  config_param :format, :string, :default => 'json'
 
   def initialize
     super
@@ -30,16 +31,26 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
   end
 
   def write(chunk)
-    bulk_message = []
-
-    chunk.msgpack_each do |tag, time, record|
-      bulk_message << record.to_json
+    messages = []
+    
+    case @format
+      when 'json'
+        chunk.msgpack_each do |tag, time, record|
+          messages << record.to_json
+        end
+      when 'text'
+        chunk.msgpack_each do |tag, time, record|
+          messages << record['message']
+        end
     end
-    bulk_message << ""
 
     http = Net::HTTP.new(@host, @port.to_i)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http.set_debug_output $stderr
+
     request = Net::HTTP::Post.new(@path)
-    request.body = bulk_message.join("\n")
+    request.body = messages.join("\n")
     http.request(request)
   end
 end
