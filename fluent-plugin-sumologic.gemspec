@@ -5,10 +5,10 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-sumologic"
   spec.version       = "0.0.1" 
-  spec.authors       = ["Satoru Miura"]
+  spec.authors       = ["memorycraft"]
   spec.email         = ["memorycraft@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{fluent plugin for sumologic}
+  spec.summary       = %q{sumologic is log management system. this plugin is fluent output plugin send to sumologic}
   spec.homepage      = "https://github.com/memorycraft/fluent-plugin-sumologic"
   spec.license       = "MIT"
 
