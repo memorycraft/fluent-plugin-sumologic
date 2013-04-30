@@ -1,6 +1,12 @@
 # Fluent::Plugin::Sumologic
 
-TODO: Write a gem description
+fluent output plugin for Sumologic
+
+## Fluentd
+http://fluentd.org/
+
+## Sumologic
+http://www.sumologic.com/
 
 ## Installation
 
