@@ -18,7 +18,20 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+<match *.apache.*>
+  type sumologic
+  host collectors.sumologic.com
+  port 443
+  format json|text
+  path /receiver/v1/http/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX==
+</match>
+
+type: sumologic
+host: hostname of HTTP Collectors URL
+port: port of HTTP Collectors URL
+path: path of HTTP Collectors URL
+format: json - send as json format in fluent way
+        text - send as raw text format (ex: using "parse using public/apache/access")
 
 ## Contributing
 
