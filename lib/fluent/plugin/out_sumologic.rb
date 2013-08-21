@@ -10,6 +10,12 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
   config_param :path, :string,  :default => '/receiver/v1/http/XXX'
   config_param :format, :string, :default => 'json'
 
+  include Fluent::SetTagKeyMixin
+  config_set_default :include_tag_key, false
+
+  include Fluent::SetTimeKeyMixin
+  config_set_default :include_time_key, false
+
   def initialize
     super
   end
@@ -36,6 +42,12 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
     case @format
       when 'json'
         chunk.msgpack_each do |tag, time, record|
+          if @include_tag_key
+            record.merge!(@tag_key => tag)
+          end
+          if @include_time_key
+            record.merge!(@time_key => @timef.format(time))
+          end
           messages << record.to_json
         end
       when 'text'
