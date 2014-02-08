@@ -1,4 +1,4 @@
-# Fluent::Plugin::Sumologic
+# Fluent::Plugin::Sumologic, a plugin for [Fluentd](http://fluentd.org)
 
 fluent output plugin for Sumologic
 
