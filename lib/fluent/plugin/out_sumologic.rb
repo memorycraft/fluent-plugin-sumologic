@@ -63,6 +63,9 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
 
     request = Net::HTTP::Post.new(@path)
     request.body = messages.join("\n")
-    http.request(request)
+    response = http.request(request)
+    unless response.is_a?(Net::HTTPSuccess)
+      raise "Failed to send data to #{@host}. #{response.code} #{response.message}"
+    end 
   end
 end
