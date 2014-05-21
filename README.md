@@ -50,6 +50,9 @@ Or install it yourself as:
 - json: send as json format in fluent way
 - text: send as raw text format (ex: using "parse using public/apache/access")
 
+#### verify_ssl
+- Verify ssl certificate. Default is true.
+
 ## Contributing
 
 1. Fork it
