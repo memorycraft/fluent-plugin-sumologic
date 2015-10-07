@@ -7,6 +7,7 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
 
   config_param :host, :string,  :default => 'collectors.sumologic.com'
   config_param :port, :integer, :default => 443
+  config_param :verify_ssl, :bool, :default => true
   config_param :path, :string,  :default => '/receiver/v1/http/XXX'
   config_param :format, :string, :default => 'json'
 
@@ -58,7 +59,7 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
 
     http = Net::HTTP.new(@host, @port.to_i)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http.verify_mode = @verify_ssl ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
     http.set_debug_output $stderr
 
     request = Net::HTTP::Post.new(@path)
