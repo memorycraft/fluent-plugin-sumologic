@@ -10,6 +10,7 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
   config_param :verify_ssl, :bool, :default => true
   config_param :path, :string,  :default => '/receiver/v1/http/XXX'
   config_param :format, :string, :default => 'json'
+  config_param :source_name_key, :string, :default => ''
 
   include Fluent::SetTagKeyMixin
   config_set_default :include_tag_key, false
@@ -38,8 +39,8 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
   end
 
   def write(chunk)
-    messages = []
-    
+    messages_list = {}
+
     case @format
       when 'json'
         chunk.msgpack_each do |tag, time, record|
@@ -49,11 +50,16 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
           if @include_time_key
             record.merge!(@time_key => @timef.format(time))
           end
-          messages << record.to_json
+          source_name = record[@source_name_key] || ''
+          record.delete(@source_name_key)
+          messages_list[source_name] = [] unless messages_list[source_name]
+          messages_list[source_name] << record.to_json
         end
       when 'text'
         chunk.msgpack_each do |tag, time, record|
-          messages << record['message']
+          source_name = record[@source_name_key] || ''
+          messages_list[source_name] = [] unless messages_list[source_name]
+          messages_list[source_name] << record['message']
         end
     end
 
@@ -62,11 +68,14 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
     http.verify_mode = @verify_ssl ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
     http.set_debug_output $stderr
 
-    request = Net::HTTP::Post.new(@path)
-    request.body = messages.join("\n")
-    response = http.request(request)
-    unless response.is_a?(Net::HTTPSuccess)
-      raise "Failed to send data to #{@host}. #{response.code} #{response.message}"
-    end 
+    messages_list.each do |source_name, messages|
+      request = Net::HTTP::Post.new(@path)
+      request['X-Sumo-Name'] = source_name unless source_name.empty?
+      request.body = messages.join("\n")
+      response = http.request(request)
+      unless response.is_a?(Net::HTTPSuccess)
+        raise "Failed to send data to #{@host}. #{response.code} #{response.message}"
+      end
+    end
   end
 end
