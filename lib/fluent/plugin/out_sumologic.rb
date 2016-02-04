@@ -7,6 +7,7 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
 
   config_param :host, :string,  :default => 'collectors.sumologic.com'
   config_param :port, :integer, :default => 443
+  config_param :proxy, :string, :default => nil
   config_param :verify_ssl, :bool, :default => true
   config_param :path, :string,  :default => '/receiver/v1/http/XXX'
   config_param :format, :string, :default => 'json'
@@ -63,7 +64,8 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
         end
     end
 
-    (proxy,proxy_port) = ENV['http_proxy'].split(':')
+    proxy_string = if ENV['http_proxy'] then ENV['http_proxy'] else @proxy end
+    (proxy,proxy_port) = proxy_string.split(':')
     http = Net::HTTP::Proxy(proxy,proxy_port).new(@host, @port.to_i)
     http.use_ssl = true
     http.verify_mode = @verify_ssl ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
