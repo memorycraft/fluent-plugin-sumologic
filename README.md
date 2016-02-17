@@ -29,6 +29,7 @@ Or install it yourself as:
 	  type sumologic
       host collectors.sumologic.com
       port 443
+      proxy 10.0.0.1:3128
       format json|text
       path /receiver/v1/http/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX==
 	</match>
@@ -42,6 +43,9 @@ Or install it yourself as:
 
 #### port
 - Port of HTTP Collectors URL
+
+#### proxy
+- HTTP proxy address including port
 
 #### path
 - Path of HTTP Collectors URL
