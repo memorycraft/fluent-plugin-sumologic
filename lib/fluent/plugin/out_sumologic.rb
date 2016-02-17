@@ -64,9 +64,12 @@ class Fluent::SumologicOutput< Fluent::BufferedOutput
         end
     end
 
+    http = Net::HTTP.new(@host, @port.to_i)
     proxy_string = if ENV['http_proxy'] then ENV['http_proxy'] else @proxy end
-    (proxy,proxy_port) = proxy_string.split(':')
-    http = Net::HTTP::Proxy(proxy,proxy_port).new(@host, @port.to_i)
+    if(proxy_string){
+        (proxy,proxy_port) = proxy_string.split(':')
+        http = Net::HTTP::Proxy(proxy,proxy_port).new(@host, @port.to_i)
+    }
     http.use_ssl = true
     http.verify_mode = @verify_ssl ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
     http.set_debug_output $stderr
